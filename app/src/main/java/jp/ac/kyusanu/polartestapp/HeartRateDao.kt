@@ -11,7 +11,14 @@ interface HeartRateDao {
     suspend fun insert(data: HeartRateEntity)
 
     @Query("SELECT * FROM heart_rate ORDER BY timestamp DESC")
-
     fun getAll(): Flow<List<HeartRateEntity>>
+
+    @Query("SELECT * FROM heart_rate WHERE uploaded = 0")
+    suspend fun getUnsent(): List<HeartRateEntity>//suspendは一回だけ
+
+    @Query("UPDATE heart_rate SET uploaded = 1 WHERE id IN (:ids)")
+    suspend fun markAsSent(ids: List<Long>)
+
+
 
 }

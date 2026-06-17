@@ -1,5 +1,6 @@
 package jp.ac.kyusanu.polartestapp
 
+import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,9 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 
 @Composable
 fun MainScreen (modifier: Modifier = Modifier,viewModel: MainViewModel){
+    val context = LocalContext.current
     val devices by viewModel.devices.collectAsState()
     val heartRate by viewModel.hr.collectAsState()
     val rrInterval by viewModel.rr.collectAsState()
@@ -87,7 +91,13 @@ fun MainScreen (modifier: Modifier = Modifier,viewModel: MainViewModel){
                     modifier = Modifier
                         .padding(vertical = 4.dp)
                         .clickable {
-                            viewModel.connect(device.deviceId)
+                            val intent = Intent(context, PolarService::class.java).apply {
+                                putExtra("DEVICE_ID", device.deviceId)
+                            }
+                            ContextCompat.startForegroundService(
+                                context,
+                                intent//上で作ったインテントでサービスにデバイスIDを送ってる
+                            )
                         }
                 ) {
                     Column(

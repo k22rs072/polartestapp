@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -65,4 +66,11 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
     ksp(libs.androidx.room.compiler)//roomのコンパイラ
+
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+
+    implementation(libs.kotlinx.serialization.json)
 }

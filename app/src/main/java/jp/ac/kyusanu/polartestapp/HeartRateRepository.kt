@@ -15,5 +15,8 @@ class HeartRateRepository(
             )
         )
     }
-    suspend fun getAll() = dao.getAll()
+    fun getAll() = dao.getAll()
+    suspend fun getUnsent() = dao.getUnsent()
+
+    suspend fun markAsSent(ids: List<Long>) = dao.markAsSent(ids)
 }
