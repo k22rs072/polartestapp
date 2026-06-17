@@ -27,11 +27,12 @@ class MainActivity : ComponentActivity() {
             1
         )
         val polarManager = PolarManager(this)
+        val viewModel = MainViewModel(polarManager)
         enableEdgeToEdge()
         setContent {
             PolarTestAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MainScreen(modifier = Modifier.padding(innerPadding),polarManager = polarManager)
+                    MainScreen(modifier = Modifier.padding(innerPadding),viewModel = viewModel)
                 }
             }
         }
