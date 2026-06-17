@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
+import androidx.room.Room
 import jp.ac.kyusanu.polartestapp.ui.theme.PolarTestAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -26,8 +27,17 @@ class MainActivity : ComponentActivity() {
             ),
             1
         )
+
         val polarManager = PolarManager(this)
-        val viewModel = MainViewModel(polarManager)
+        val db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java,
+            "polar.db"
+        ).build()
+
+        val heartRateRepository = HeartRateRepository(db.heartRateDao())
+        val viewModel = MainViewModel(polarManager,heartRateRepository)
+
         enableEdgeToEdge()
         setContent {
             PolarTestAppTheme {
@@ -36,21 +46,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PolarTestAppTheme {
-        Greeting("Android")
     }
 }

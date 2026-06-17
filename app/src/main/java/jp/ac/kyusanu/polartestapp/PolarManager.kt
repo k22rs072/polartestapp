@@ -20,7 +20,7 @@ class PolarManager (context: Context){
     var onDeviceFound: ((PolarDeviceInfo) -> Unit)? = null
     var onHr: ((Int) -> Unit)? = null
     var onRr: ((Int) -> Unit)? = null
-
+    var onVitalData: ((Int, Int) -> Unit)? = null
     var onConnectionChanged: ((String) -> Unit)? = null
     companion object {
         private const val TAG = "PolarManager"
@@ -86,11 +86,18 @@ class PolarManager (context: Context){
                             polarHrData.samples.forEach { sample ->
 //                                Log.d(TAG, "HeartRate : ${sample.hr}")
                                 Log.d(TAG, sample.toString())
+
+                                val rr = sample.rrsMs.firstOrNull() ?: return@forEach
+
                                 onHr?.invoke(sample.hr)//HeartRate
 
-                                sample.rrsMs.forEach { rr ->
-                                    onRr?.invoke(rr)
-                                }
+                                onRr?.invoke(rr)//下で二つ取るなら消してもいいかも
+
+                                onVitalData?.invoke(
+                                    sample.hr,
+                                    rr
+                                )
+
                             }}//データが流れてきたら毎回する処理
                         .launchIn(CoroutineScope(Dispatchers.IO))//ここわからん
             }
@@ -105,8 +112,8 @@ class PolarManager (context: Context){
         onConnectionChanged?.invoke("デバイス検索中")
         api.searchForDevice()
             .onEach { device ->
-                Log.d(TAG, "Found: ${device.deviceId}")
-                Log.d(TAG, "Name: ${device.name}")
+//                Log.d(TAG, "Found: ${device.deviceId}")
+//                Log.d(TAG, "Name: ${device.name}")
                 onDeviceFound?.invoke(device)
             }
             .launchIn(CoroutineScope(Dispatchers.IO))

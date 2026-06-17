@@ -1,12 +1,16 @@
 package jp.ac.kyusanu.polartestapp
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.polar.sdk.api.model.PolarDeviceInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class MainViewModel (
-    private val polarManager: PolarManager
+    private val polarManager: PolarManager,
+    private val repository: HeartRateRepository
 ) : ViewModel() {
     private val _devices = MutableStateFlow<List<PolarDeviceInfo>>(emptyList())
 
@@ -31,8 +35,16 @@ class MainViewModel (
         polarManager.onDeviceFound = { value ->
             _devices.value = (_devices.value + value).distinctBy { it.deviceId }//重複したものは消す
         }
+        polarManager.onVitalData = { hr, rr ->
+            viewModelScope.launch {
+                Log.d("DB", "save hr=$hr rr=$rr")
+                repository.insert(
+                    heartRate = hr,
+                    rrInterval = rr
+                )
+            }
+        }
     }
-
 
     fun autoConnect() {
         polarManager.autoConnect()
@@ -43,6 +55,18 @@ class MainViewModel (
     }
     fun connect(deviceId: String) {
         polarManager.connect(deviceId)
+    }
+
+    fun save(
+        heartRate: Int,
+        rrInterval: Int
+    ) {
+        viewModelScope.launch {
+            repository.insert(
+                heartRate = heartRate,
+                rrInterval = rrInterval
+            )
+        }
     }
     fun disconnect(deviceId: String) {
         polarManager.disconnect(deviceId)
