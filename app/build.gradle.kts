@@ -1,3 +1,6 @@
+
+val targetSdk = 37
+val minSdk = targetSdk - 5
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -11,8 +14,8 @@ android {
 
     defaultConfig {
         applicationId = "jp.ac.kyusanu.polartestapp"
-        minSdk = 37
-        targetSdk = 37
+        minSdk = 33
+        targetSdk = targetSdk
         versionCode = 1
         versionName = "1.0"
 
@@ -51,4 +54,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    implementation(libs.polar.ble.sdk)
+
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.rx3)
 }
