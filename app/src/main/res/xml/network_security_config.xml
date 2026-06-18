@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains = "true">133.17.158.124</domain>//trueはサブドメインを許可するか
+    </domain-config>
+</network-security-config>

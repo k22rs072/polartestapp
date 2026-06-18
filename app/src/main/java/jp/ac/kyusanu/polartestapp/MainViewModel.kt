@@ -10,7 +10,6 @@ import kotlinx.coroutines.launch
 
 class MainViewModel (
     private val polarManager: PolarManager,
-    private val repository: HeartRateRepository
 ) : ViewModel() {
     private val _devices = MutableStateFlow<List<PolarDeviceInfo>>(emptyList())
 
@@ -38,36 +37,36 @@ class MainViewModel (
         polarManager.onVitalData = { hr, rr ->
             viewModelScope.launch {
                 Log.d("DB", "save hr=$hr rr=$rr")
-                repository.insert(
-                    heartRate = hr,
-                    rrInterval = rr
-                )
             }
         }
     }
-
     fun autoConnect() {
         polarManager.autoConnect()
     }
+
     fun search() {
         _devices.value = emptyList()//前回のが残んないように初期化
         polarManager.search()
     }
+
     fun connect(deviceId: String) {
         polarManager.connect(deviceId)
     }
 
     fun save(
         heartRate: Int,
-        rrInterval: Int
+        rrInterval: Int,
+        deviceId: String
     ) {
         viewModelScope.launch {
-            repository.insert(
-                heartRate = heartRate,
-                rrInterval = rrInterval
-            )
+//            repository.insert(
+//                heartRate = heartRate,
+//                rrInterval = rrInterval,
+//                deviceId = deviceId
+//            )
         }
     }
+
     fun disconnect(deviceId: String) {
         polarManager.disconnect(deviceId)
     }

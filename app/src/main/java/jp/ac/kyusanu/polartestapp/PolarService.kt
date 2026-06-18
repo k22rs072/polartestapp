@@ -21,6 +21,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class PolarService : Service()  {
     private lateinit var polarManager: PolarManager
+    private lateinit var syncManager: SyncManager
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var connectedDeviceId: String? = null
     private var isConnected = false
@@ -37,11 +38,16 @@ class PolarService : Service()  {
         ).build()
         repository = HeartRateRepository(db.heartRateDao())
         polarManager = PolarManager(this)
+        syncManager = SyncManager(repository)
         createChannel()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d("SERVICE", "onStartCommand called")
+
+        Log.d("SERVICE", "deviceId=${intent?.getStringExtra("DEVICE_ID")}")
         startForeground(1, createNotification())
+
 
         val deviceId = intent?.getStringExtra("DEVICE_ID")
 
@@ -64,11 +70,14 @@ class PolarService : Service()  {
 
         scope.launch {
             while (true) {
-                repository.insert(
-                    heartRate = latestHr,
-                    rrInterval = latestRr
-                )
-                val unsentData = repository.getUnsent()
+                deviceId?.let { id ->
+                    repository.insert(
+                        heartRate = latestHr,
+                        rrInterval = latestRr,
+                        deviceId = id
+                    )
+                }
+                syncManager.sync()
                 delay(60000.milliseconds) // 1分ごと
             }
 

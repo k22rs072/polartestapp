@@ -23,20 +23,14 @@ class MainActivity : ComponentActivity() {
             this,
             arrayOf(
                 android.Manifest.permission.BLUETOOTH_SCAN,
-                android.Manifest.permission.BLUETOOTH_CONNECT
+                android.Manifest.permission.BLUETOOTH_CONNECT,
+                android.Manifest.permission.POST_NOTIFICATIONS
             ),
             1
         )
 
         val polarManager = PolarManager(this)
-        val db = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java,
-            "polar.db"
-        ).build()
-
-        val heartRateRepository = HeartRateRepository(db.heartRateDao())
-        val viewModel = MainViewModel(polarManager,heartRateRepository)
+        val viewModel = MainViewModel(polarManager)
 
         enableEdgeToEdge()
         setContent {

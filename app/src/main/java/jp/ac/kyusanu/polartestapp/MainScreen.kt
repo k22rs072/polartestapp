@@ -65,7 +65,6 @@ fun MainScreen (modifier: Modifier = Modifier,viewModel: MainViewModel){
         Spacer(modifier = Modifier.height(32.dp))
         Button(
             onClick = {
-//                viewModel.connect()
                 viewModel.search()
             },
             shape = RoundedCornerShape(24.dp),
