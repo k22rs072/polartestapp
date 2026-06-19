@@ -2,6 +2,7 @@ package jp.ac.kyusanu.polartestapp
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlin.Int
 
 @Entity(tableName = "heart_rate")
 data class HeartRateEntity(
@@ -19,8 +20,13 @@ data class HeartRateEntity(
 fun HeartRateEntity.toDto(): HeartRateDto {
     return HeartRateDto(
         deviceId = deviceId,
+        location = "SG01",
         timestamp = timestamp,
-        heartRate = heartRate,
-        rrInterval = rrInterval
+        skinTemperature = null,
+        heartRate = heartRate.toShort(),
+        rrInterval = rrInterval.toShort(),
+        spo2 = null,
+        build = 1,
+        systemVersion = "0.1.0"    // デフォルトでnullをセット
     )
 }

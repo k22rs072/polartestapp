@@ -20,8 +20,9 @@ class SyncManager(private val repository: HeartRateRepository) {
             repository.markSending(ids, true)
             // ② DTO化
             val dto = unsent.map { it.toDto() }
+            Log.d("SYNC", "SEND")
             // ③ 送信
-            val response = ApiClient.client.post("http://133.17.158.124/polar_vital_api/save_data.php") {
+            val response = ApiClient.client.post("https://carbon25.apps.kyusan-u.ac.jp/vital/save_data.php") {
                 contentType(ContentType.Application.Json)
                 setBody(dto)
             }
